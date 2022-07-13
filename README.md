@@ -16,12 +16,9 @@ The valuation is then calculated against the resulting list using the following 
 - If there are 1 or more houses in the list with the exact square footage of the house to price, use the mean of those prices.
 - If the required square footage is between the square footage of two houses in the list, interpolate the square foot price using the means of the closest higher and lower-priced homes.
 - If the required square footage is outside of the range of houses listed, extrapolate the price based on the means of the two square footage values that are closest to the home to value.
-In all cases, if the final price is less than $10^{3}$ or greater than $10^{6}$, the price will be $10^{3}$ and $10^{6}$, respectively. For any square footage, the square foot price is the mean of the prices at that square footage. Return an integer that represents the valuation of the seller's house.
-For example, there are $n=6$ houses with area $=[1200,1300,1200,1300,1200,2000]$, price = $[12000,24000,14000,22000,13000,30000]$ and the house to value has reqArea $=1500$ square feet. The following table shows the test for outliers:
+In all cases, if the final price is less than $10^{3}$ or greater than $10^{6}$, the price will be $10^{3}$ and $10^{6}$, respectively. 
 
-Function Description
-Complete the function valuation in the editor below. The function must return the expected price rounded to the nearest integer.
-valuation has the following parameter(s):
-int reqArea. the area of the seller's house in square feet int area[n]: each value is an area of a house sold in the past int price $[n]$ : price[i] is the price of the $i^{\text {th }}$ house in area[]
+
+
 
 
