@@ -1,5 +1,6 @@
 # Price-to-Sell
 Solution to Hackerrank Problem Price to Sell
+
 A real estate agent is advising a seller on the price to ask for a home. To do this, the agent will look at homes that have sold in the area and base the valuation on this data. The only factors that will be considered are square footage and sale price.
 
 The agent starts by removing any outliers from the list of comparable homes. To determine the outliers:
