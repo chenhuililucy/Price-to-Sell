@@ -19,13 +19,17 @@ import sys
 from collections import defaultdict
 from collections import OrderedDict
 import bisect
+
+
 def outlier_removal(area, price):
     """
     Removal of outliers in O(N) time
     """
-    d = defaultdict(list) # keep track of area to price one to many mappings
-    x_total = {} # keep track of area to total price one to many mapping
-    sum_x_squared = {} # keep track of area to sum of the squares of price one to many mapping 
+    d = defaultdict(list)  # keep track of area to price one to many mappings
+    x_total = {}  # keep track of area to total price one to many mapping
+    sum_x_squared = (
+        {}
+    )  # keep track of area to sum of the squares of price one to many mapping
     for idx in range(len(area)):
         d[area[idx]].append(price[idx])
         if area[idx] not in x_total:
@@ -36,14 +40,16 @@ def outlier_removal(area, price):
             sum_x_squared[area[idx]] = price[idx] ** 2
         else:
             sum_x_squared[area[idx]] += price[idx] ** 2
-    
-    comp_areas = defaultdict(float) # mapping comp area to total price
-    comp_freq = defaultdict(int) # mapping comp area to number of houses
+
+    comp_areas = defaultdict(float)  # mapping comp area to total price
+    comp_freq = defaultdict(int)  # mapping comp area to number of houses
     for key, val in d.items():
         for i in range(len(val)):
             if len(val) - 1 > 0:
-                average = (x_total[key] -  val[i]) / (len(val) - 1)
-                sigma = ((sum_x_squared[key] -  val[i] ** 2) / (len(val) - 1) - average ** 2) ** 0.5
+                average = (x_total[key] - val[i]) / (len(val) - 1)
+                sigma = (
+                    (sum_x_squared[key] - val[i] ** 2) / (len(val) - 1) - average ** 2
+                ) ** 0.5
                 if not abs(val[i] - average) > 3 * sigma:
                     comp_areas[key] += val[i]
                     comp_freq[key] += 1
@@ -53,26 +59,28 @@ def outlier_removal(area, price):
     for key in comp_freq.keys():
         comp_areas[key] /= comp_freq[key]
     return comp_areas
-    
+
+
 def check_price_bounds(price):
-    if price < 10 ** 3: 
+    if price < 10 ** 3:
         return 10 ** 3
     elif price > 10 ** 6:
         return 10 ** 6
     else:
         return price
-    
+
+
 def valuation(reqArea, area, price):
-    
+
     comp_areas = outlier_removal(area, price)
 
     # sort by filtered houses by final area
-    final_area, final_price= [], []
+    final_area, final_price = [], []
     od = OrderedDict(sorted(comp_areas.items()))
     for key, val in od.items():
         final_area.append(key)
         final_price.append(val)
-    
+
     # determine valuation
     if len(final_area) == 0:
         return check_price_bounds(round(1000 * reqArea))
@@ -82,21 +90,49 @@ def valuation(reqArea, area, price):
         idx = final_area.index(reqArea)
         return check_price_bounds(round(final_price[idx]))
     else:
-        insert_position = bisect.bisect_left(final_area, reqArea) # note: bisect_left is a binary search
+        insert_position = bisect.bisect_left(
+            final_area, reqArea
+        )  # note: bisect_left is a binary search
         if insert_position == len(final_area):
             lower_p, higher_p = final_price[-2], final_price[-1]
             lower_a, higher_a = final_area[-2], final_area[-1]
-            return check_price_bounds(round(higher_p + (reqArea - higher_a) * ((higher_p - lower_p) / (higher_a - lower_a))))
+            return check_price_bounds(
+                round(
+                    higher_p
+                    + (reqArea - higher_a)
+                    * ((higher_p - lower_p) / (higher_a - lower_a))
+                )
+            )
         elif insert_position == 0:
             lower_p, higher_p = final_price[0], final_price[1]
             lower_a, higher_a = final_area[0], final_area[1]
-            return check_price_bounds(round(lower_p - (lower_a - reqArea) * ((higher_p - lower_p) / (higher_a - lower_a))))
+            return check_price_bounds(
+                round(
+                    lower_p
+                    - (lower_a - reqArea)
+                    * ((higher_p - lower_p) / (higher_a - lower_a))
+                )
+            )
         else:
-            lower_p, higher_p  = final_price[insert_position - 1], final_price[insert_position]
-            lower_a, higher_a = final_area[insert_position - 1], final_area[insert_position]
-            return check_price_bounds(round(lower_p + (reqArea - lower_a) * ((higher_p - lower_p) / (higher_a - lower_a))))
-if __name__ == '__main__':
-    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+            lower_p, higher_p = (
+                final_price[insert_position - 1],
+                final_price[insert_position],
+            )
+            lower_a, higher_a = (
+                final_area[insert_position - 1],
+                final_area[insert_position],
+            )
+            return check_price_bounds(
+                round(
+                    lower_p
+                    + (reqArea - lower_a)
+                    * ((higher_p - lower_p) / (higher_a - lower_a))
+                )
+            )
+
+
+if __name__ == "__main__":
+    fptr = open(os.environ["OUTPUT_PATH"], "w")
 
     reqArea = int(input().strip())
 
@@ -118,6 +154,6 @@ if __name__ == '__main__':
 
     result = valuation(reqArea, area, price)
 
-    fptr.write(str(result) + '\n')
+    fptr.write(str(result) + "\n")
 
     fptr.close()
